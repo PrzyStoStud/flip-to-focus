@@ -64,6 +64,10 @@ jobs:
       run:
         working-directory: flip_to_focus
 
+    defaults:
+      run:
+        working-directory: flip_to_focus
+
     steps:
       - uses: actions/checkout@v4
 
