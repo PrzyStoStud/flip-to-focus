@@ -60,7 +60,7 @@ async def create_session(
     current_user: UserModel = Depends(get_current_user), db: DBSession = Depends(get_db)
 ):
     """Create a new session."""
-    now = datetime.datetime.now().isoformat()
+    now = datetime.datetime.now()
     new_session = Session(user_id=current_user.id, start=now, end=now)
     db.add(new_session)
     db.commit()
