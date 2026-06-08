@@ -9,6 +9,7 @@ from pwdlib import PasswordHash
 SECRET_KEY = os.environ.get("API_SECRET_KEY", "your-secret-key")
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 1
+REFRESH_TOKEN_EXPIRE_DAYS = 7
 
 # Password Hashing
 password_hash = PasswordHash.recommended()
@@ -35,6 +36,21 @@ def create_access_token(data: dict, expires_delta: timedelta | None = None) -> s
         {
             "exp": expire,
             "type": "access",
+        }
+    )
+    encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
+    return encoded_jwt
+
+
+def create_refresh_token(data: dict) -> str:
+    """Creates a new JWT refresh token."""
+    to_encode = data.copy()
+    expire = datetime.utcnow() + timedelta(days=REFRESH_TOKEN_EXPIRE_DAYS)
+    to_encode.update(
+        {
+            "exp": expire,
+            "type": "refresh",
+            "jti": str(uuid.uuid4()),
         }
     )
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)

@@ -1,4 +1,4 @@
-from datetime import timedelta
+from datetime import datetime, timedelta
 
 import jwt
 from core.security import (
@@ -6,12 +6,14 @@ from core.security import (
     ALGORITHM,
     SECRET_KEY,
     create_access_token,
+    create_refresh_token,
     get_password_hash,
     verify_password,
 )
 from db import SessionLocal
 from fastapi import APIRouter, Depends, Form, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
+from models.refresh_token import RefreshToken
 from models.user import User as UserModel
 from pydantic import BaseModel
 from sqlalchemy.orm import Session as DBSession
@@ -21,6 +23,7 @@ router = APIRouter()
 
 class Token(BaseModel):
     access_token: str
+    refresh_token: str
     token_type: str
     expires_in: int
 
@@ -100,6 +103,8 @@ async def token(
     grant_type: str = Form(...),
     username: str = Form(None),
     password: str = Form(None),
+    refresh_token: str = Form(None),
+    client_id: str = Form(None),
     db: DBSession = Depends(get_db),
 ):
     """
@@ -129,6 +134,50 @@ async def token(
                 detail="Invalid credentials",
             )
 
+    elif grant_type == "refresh_token":
+        if not refresh_token:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Missing refresh_token",
+            )
+
+        try:
+            payload = jwt.decode(
+                refresh_token,
+                SECRET_KEY,
+                algorithms=[ALGORITHM],
+                options={"require": ["exp", "sub"]},
+            )
+
+            if payload.get("type") != "refresh":
+                raise HTTPException(
+                    status_code=status.HTTP_401_UNAUTHORIZED,
+                    detail="Invalid token type",
+                )
+
+            user_id = payload.get("sub")
+
+            token_record = (
+                db.query(RefreshToken).filter_by(token_jti=payload["jti"]).first()
+            )
+
+            if not token_record or token_record.revoked:
+                raise HTTPException(status_code=401, detail="Token revoked")
+
+        except jwt.PyJWTError:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Invalid refresh token",
+            )
+
+        user = db.query(UserModel).filter(UserModel.email == user_id).first()
+
+        if not user:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="User not found",
+            )
+
     else:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -140,8 +189,24 @@ async def token(
         expires_delta=timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES),
     )
 
+    new_refresh_token = create_refresh_token(
+        data={"sub": user.email},
+    )
+
+    payload = jwt.decode(new_refresh_token, SECRET_KEY, algorithms=[ALGORITHM])
+
+    db.add(
+        RefreshToken(
+            user_id=user.id,
+            token_jti=payload["jti"],
+            expires_at=datetime.utcfromtimestamp(payload["exp"]),
+        )
+    )
+    db.commit()
+
     return {
         "access_token": access_token,
+        "refresh_token": new_refresh_token,
         "token_type": "Bearer",
         "expires_in": ACCESS_TOKEN_EXPIRE_MINUTES * 60,
     }
@@ -164,6 +229,29 @@ async def remove(
 
 
 @router.post("/logout")
-async def logout():
+async def logout(
+    refresh_token: str = Form(...),
+    db: DBSession = Depends(get_db),
+):
     """Logout a user."""
+    try:
+        payload = jwt.decode(
+            refresh_token,
+            SECRET_KEY,
+            algorithms=[ALGORITHM],
+        )
+
+        jti = payload.get("jti")
+        if not jti:
+            return {"message": "logged out"}
+
+        token = db.query(RefreshToken).filter(RefreshToken.token_jti == jti).first()
+
+        if token:
+            token.revoked = True
+            db.commit()
+
+    except jwt.PyJWTError:
+        pass
+
     return {"message": "logged out"}
