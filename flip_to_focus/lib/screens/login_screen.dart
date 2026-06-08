@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'sensor_timer_screen.dart';
+import 'time_selection_screen.dart';
 
 class LoginScreen extends StatelessWidget {
   const LoginScreen({super.key});
@@ -46,8 +46,7 @@ class LoginScreen extends StatelessWidget {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) =>
-                            const SensorTimerScreen(sessionDurationSeconds: 60),
+                        builder: (context) => const TimeSelectionScreen(),
                       ),
                     );
                   },
