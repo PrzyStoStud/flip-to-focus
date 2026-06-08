@@ -20,6 +20,7 @@ echo "==> Backend checks"
 pushd "$ROOT_DIR/server"
 
 ruff check .
+mypy .
 black .
 
 git add .

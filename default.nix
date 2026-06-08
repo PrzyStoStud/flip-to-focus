@@ -59,6 +59,6 @@ pkgs.mkShell {
 
   postVenvCreation = ''
     python -m ensurepip --default-pip
-    pip install -r server/requirements.txt
+    pip install -r server/requirements.txt ruff mypy black
   '';
 }
