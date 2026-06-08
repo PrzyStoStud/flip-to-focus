@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+
+set -e
+
+ROOT_DIR="$(git rev-parse --show-toplevel)"
+
+cd "$ROOT_DIR"
+
+echo "==> Flutter checks"
+pushd "$ROOT_DIR/flip_to_focus"
+
+dart format .
+flutter analyze
+
+git add .
+
+popd
+
+echo "==> Backend checks"
+pushd "$ROOT_DIR/server"
+
+ruff check .
+mypy .
+black .
+
+git add .
+
+popd
