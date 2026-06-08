@@ -1,0 +1,57 @@
+opencollection: 1.0.0
+
+info:
+  name: Flip to Focus
+config:
+  proxy:
+    inherit: true
+    config:
+      protocol: http
+      hostname: ""
+      port: ""
+      auth:
+        username: ""
+        password: ""
+      bypassProxy: ""
+
+request:
+  auth:
+    type: oauth2
+    flow: resource_owner_password_credentials
+    accessTokenUrl: "{{baseUrl}}/auth/token"
+    refreshTokenUrl: "{{baseUrl}}/auth/token"
+    credentials:
+      clientId: "{{oauth_client_id}}"
+      clientSecret: "{{oauth_client_secret}}"
+      placement: body
+    resourceOwner:
+      username: "{{username}}"
+      password: "{{password}}"
+    tokenConfig:
+      id: credentials
+      placement:
+        header: Bearer
+      source: access_token
+    settings:
+      autoFetchToken: true
+      autoRefreshToken: true
+  variables:
+    - name: baseUrl
+      value: http://localhost:8000
+      disabled: true
+    - name: oauth_client_secret
+      value: ""
+    - name: oauth_client_id
+      value: client
+    - name: username
+      value: demo@tau2c.top
+    - name: password
+      value: secret123
+    - name: baseUrl
+      value: https://flip-to-focus.tau2c.top
+bundled: false
+extensions:
+  bruno:
+    ignore:
+      - node_modules
+      - .git

@@ -1,0 +1,128 @@
+info:
+  name: Login
+  type: http
+  seq: 1
+  tags:
+    - auth
+
+http:
+  method: POST
+  url: "{{baseUrl}}/auth/token"
+  body:
+    type: form-urlencoded
+    data:
+      - name: grant_type
+        value: password
+      - name: username
+        value: demo@tau2c.top
+      - name: password
+        value: secret123
+      - name: scope
+        value: ""
+      - name: client_id
+        value: a
+      - name: client_secret
+        value: ""
+        disabled: true
+
+runtime:
+  actions:
+    - type: set-variable
+      phase: after-response
+      selector:
+        expression: res.body.access_token
+        method: jsonq
+      variable:
+        name: access_token
+        scope: runtime
+    - type: set-variable
+      phase: after-response
+      selector:
+        expression: res.body.refresh_token
+        method: jsonq
+      variable:
+        name: refresh_token
+        scope: runtime
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+
+examples:
+  - name: 200 Response
+    description: Successful Response
+    request:
+      url: "{{baseUrl}}/auth/login"
+      method: POST
+      body:
+        type: form-urlencoded
+        data:
+          - name: grant_type
+            value: ""
+          - name: username
+            value: ""
+          - name: password
+            value: ""
+          - name: scope
+            value: ""
+          - name: client_id
+            value: ""
+          - name: client_secret
+            value: ""
+    response:
+      status: 200
+      statusText: OK
+      headers:
+        - name: Content-Type
+          value: application/json
+      body:
+        type: json
+        data: |-
+          {
+            "access_token": "",
+            "refresh_token": "",
+            "token_type": "",
+            "expires_in": 0
+          }
+  - name: 422 Response
+    description: Validation Error
+    request:
+      url: "{{baseUrl}}/auth/login"
+      method: POST
+      body:
+        type: form-urlencoded
+        data:
+          - name: grant_type
+            value: ""
+          - name: username
+            value: ""
+          - name: password
+            value: ""
+          - name: scope
+            value: ""
+          - name: client_id
+            value: ""
+          - name: client_secret
+            value: ""
+    response:
+      status: 422
+      statusText: Unprocessable Entity
+      headers:
+        - name: Content-Type
+          value: application/json
+      body:
+        type: json
+        data: |-
+          {
+            "detail": [
+              {
+                "loc": [],
+                "msg": "",
+                "type": ""
+              }
+            ]
+          }
+
+docs: Login a user.
