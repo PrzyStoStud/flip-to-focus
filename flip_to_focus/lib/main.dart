@@ -11,6 +11,7 @@ class FlipToFocusApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Dark mode
     return MaterialApp(
       title: 'FlipToFocus',
       theme: ThemeData.dark(),
@@ -26,43 +27,57 @@ class LoginScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Zaloguj się'), centerTitle: true),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Icon(Icons.timer, size: 80, color: Colors.blueAccent),
-            const SizedBox(height: 32),
-            const TextField(
-              decoration: InputDecoration(
-                labelText: 'Email',
-                border: OutlineInputBorder(),
-              ),
-            ),
-            const SizedBox(height: 16),
-            const TextField(
-              obscureText: true,
-              decoration: InputDecoration(
-                labelText: 'Hasło',
-                border: OutlineInputBorder(),
-              ),
-            ),
-            const SizedBox(height: 32),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const SensorTimerScreen(),
+      body: SafeArea(
+        child: Center(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Icon(Icons.timer, size: 80, color: Colors.blueAccent),
+                const SizedBox(height: 32),
+                const TextField(
+                  decoration: InputDecoration(
+                    labelText: 'Email',
+                    border: OutlineInputBorder(),
                   ),
-                );
-              },
-              style: ElevatedButton.styleFrom(
-                minimumSize: const Size(double.infinity, 50),
-              ),
-              child: const Text('ZALOGUJ'),
+                  textInputAction: TextInputAction.next,
+                ),
+                const SizedBox(height: 16),
+                TextField(
+                  obscureText: true,
+                  decoration: const InputDecoration(
+                    labelText: 'Hasło',
+                    border: OutlineInputBorder(),
+                  ),
+                  textInputAction: TextInputAction.done,
+                  onSubmitted: (_) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Logowanie z klawiatury...'),
+                      ),
+                    );
+                  },
+                ),
+                const SizedBox(height: 32),
+                ElevatedButton(
+                  onPressed: () {
+                    // Przejście do ekranu czujników!
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const SensorTimerScreen(),
+                      ),
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(
+                    minimumSize: const Size(double.infinity, 50),
+                  ),
+                  child: const Text('ZALOGUJ'),
+                ),
+              ],
             ),
-          ],
+          ),
         ),
       ),
     );
@@ -79,7 +94,7 @@ class SensorTimerScreen extends StatefulWidget {
 class _SensorTimerScreenState extends State<SensorTimerScreen> {
   double _zAxis = 0.0;
   bool _isFlat = false;
-  int _secondsLeft = 5;
+  int _secondsLeft = 60; // UWAGA: Zmieniłem na 60 dla pewności!
   int _points = 0;
   Timer? _timer;
   StreamSubscription<AccelerometerEvent>? _sensorSubscription;
@@ -141,7 +156,7 @@ class _SensorTimerScreenState extends State<SensorTimerScreen> {
     );
     setState(() {
       _points += 10;
-      _secondsLeft = 5;
+      _secondsLeft = 60;
     });
   }
 
