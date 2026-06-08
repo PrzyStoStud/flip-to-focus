@@ -5,7 +5,7 @@ on:
     branches:
       - main
       - develop
-      - "**" # any branch
+      - "**" 
   pull_request:
 
 env:
@@ -26,15 +26,19 @@ jobs:
 
       - name: Install dependencies
         run: flutter pub get
+        working-directory: ./flip_to_focus
 
       - name: Format check
         run: dart format --output=none --set-exit-if-changed .
+        working-directory: ./flip_to_focus
 
       - name: Analyze
         run: flutter analyze
+        working-directory: ./flip_to_focus
 
       - name: Run tests
         run: flutter test
+        working-directory: ./flip_to_focus
 
   build_apk:
     name: Build APK (main & develop only)
@@ -53,12 +57,14 @@ jobs:
 
       - name: Install dependencies
         run: flutter pub get
+        working-directory: ./flip_to_focus
 
       - name: Build APK (release)
         run: flutter build apk --release
+        working-directory: ./flip_to_focus
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: app-release-apk
-          path: build/app/outputs/flutter-apk/app-release.apk
+          path: flip_to_focus/build/app/outputs/flutter-apk/app-release.apk
