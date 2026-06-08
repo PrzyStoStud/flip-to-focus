@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flip_to_focus/main.dart';
 
 void main() {
-  testWidgets('Test logowania - wpisywanie danych i klikanie przycisku', (
+  testWidgets('Test logowania i przejścia do wyboru czasu', (
     WidgetTester tester,
   ) async {
     await tester.pumpWidget(const FlipToFocusApp());
@@ -12,15 +12,14 @@ void main() {
     final passwordField = find.byType(TextField).last;
     final loginButton = find.text('ZALOGUJ');
 
-    expect(emailField, findsOneWidget);
-    expect(passwordField, findsOneWidget);
-    expect(loginButton, findsOneWidget);
-
     await tester.enterText(emailField, 'student@uczelnia.pl');
     await tester.enterText(passwordField, 'tajnehaslo123');
 
     await tester.tap(loginButton);
 
-    await tester.pump();
+    await tester.pumpAndSettle();
+
+    expect(find.text('Wybierz czas skupienia'), findsOneWidget);
+    expect(find.text('25 Minut (Pomodoro)'), findsOneWidget);
   });
 }
