@@ -36,7 +36,8 @@ class LoginScreen extends StatelessWidget {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => const SensorTimerScreen(sessionDurationSeconds: 60),
+                        builder: (context) =>
+                            const SensorTimerScreen(sessionDurationSeconds: 60),
                       ),
                     );
                   },
