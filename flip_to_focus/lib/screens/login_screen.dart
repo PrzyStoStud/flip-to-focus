@@ -33,9 +33,10 @@ class LoginScreen extends StatelessWidget {
                   ),
                   textInputAction: TextInputAction.done,
                   onSubmitted: (_) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Logowanie z klawiatury...'),
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const SensorTimerScreen(sessionDurationSeconds: 60),
                       ),
                     );
                   },
