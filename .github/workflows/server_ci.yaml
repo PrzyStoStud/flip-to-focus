@@ -77,11 +77,19 @@ jobs:
         env:
           REPO: "${{ github.repository }}"
 
+      - name: Set image name suffix based on branch
+        run: |
+          if [ "${{ github.ref_name }}" == "main" ]; then
+            echo "IMAGE_NAME_SUFFIX=" >> $GITHUB_ENV
+          else
+            echo "IMAGE_NAME_SUFFIX=-dev" >> $GITHUB_ENV
+          fi
+
       - name: Extract metadata (tags, labels) for Docker
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}${{ env.IMAGE_NAME_SUFFIX }}
           tags: |
             type=ref,event=branch
             type=sha,format=short
