@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sensors_plus/sensors_plus.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:async';
 
 class SensorTimerScreen extends StatefulWidget {
@@ -24,6 +25,8 @@ class _SensorTimerScreenState extends State<SensorTimerScreen> {
     super.initState();
     _secondsLeft = widget.sessionDurationSeconds;
 
+    _loadSavedPoints();
+
     _sensorSubscription = accelerometerEventStream().listen((
       AccelerometerEvent event,
     ) {
@@ -32,12 +35,28 @@ class _SensorTimerScreenState extends State<SensorTimerScreen> {
         _isFlat = _zAxis < -8.5;
       });
 
-      if (_isFlat && _timer == null) {
-        _startTimer();
-      } else if (!_isFlat && _timer != null) {
-        _stopTimerWithFailure();
-      }
+      _evaluateTimerState();
     });
+  }
+
+  Future<void> _loadSavedPoints() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _points = prefs.getInt('total_points') ?? 0;
+    });
+  }
+
+  Future<void> _savePoints() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setInt('total_points', _points);
+  }
+
+  void _evaluateTimerState() {
+    if (_isFlat && _timer == null) {
+      _startTimer();
+    } else if (!_isFlat && _timer != null) {
+      _stopTimerWithFailure();
+    }
   }
 
   void _startTimer() {
@@ -80,6 +99,10 @@ class _SensorTimerScreenState extends State<SensorTimerScreen> {
       _points += 10;
       _secondsLeft = widget.sessionDurationSeconds;
     });
+
+    _savePoints();
+
+    _evaluateTimerState();
   }
 
   @override
