@@ -9,7 +9,7 @@ class FlipToFocusApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Dark mode 
+    // Dark mode
     return MaterialApp(
       title: 'FlipToFocus',
       theme: ThemeData.dark(),
@@ -24,10 +24,7 @@ class LoginScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Zaloguj się'),
-        centerTitle: true,
-      ),
+      appBar: AppBar(title: const Text('Zaloguj się'), centerTitle: true),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
