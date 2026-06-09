@@ -22,9 +22,11 @@ class TimeSelectionScreen extends StatelessWidget {
     await prefs.remove('jwt_token');
     await prefs.remove('total_points');
 
+    if (!context.mounted) return;
+
     Navigator.pushReplacement(
       context,
-      MaterialPageRoute(builder: (context) => const LoginScreen()),
+      MaterialPageRoute(builder: (_) => const LoginScreen()),
     );
   }
 
