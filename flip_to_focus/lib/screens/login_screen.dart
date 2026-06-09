@@ -53,9 +53,14 @@ class _LoginScreenState extends State<LoginScreen> {
         final responseData = jsonDecode(response.body);
 
         final String token = responseData['access_token'];
+        final String? refreshToken = responseData['refresh_token'];
 
         final prefs = await SharedPreferences.getInstance();
         await prefs.setString('jwt_token', token);
+
+        if (refreshToken != null) {
+          await prefs.setString('refresh_token', refreshToken);
+        }
 
         if (!mounted) return;
 

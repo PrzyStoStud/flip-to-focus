@@ -20,6 +20,7 @@ class TimeSelectionScreen extends StatelessWidget {
     final prefs = await SharedPreferences.getInstance();
 
     await prefs.remove('jwt_token');
+    await prefs.remove('refresh_token');
     await prefs.remove('total_points');
 
     if (!context.mounted) return;

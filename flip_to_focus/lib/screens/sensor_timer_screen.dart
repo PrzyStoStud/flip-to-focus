@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:sensors_plus/sensors_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 import 'dart:async';
 
 class SensorTimerScreen extends StatefulWidget {
@@ -19,6 +21,8 @@ class _SensorTimerScreenState extends State<SensorTimerScreen> {
   int _points = 0;
   Timer? _timer;
   StreamSubscription<AccelerometerEvent>? _sensorSubscription;
+
+  DateTime? _startTime;
 
   @override
   void initState() {
@@ -60,6 +64,8 @@ class _SensorTimerScreenState extends State<SensorTimerScreen> {
   }
 
   void _startTimer() {
+    _startTime ??= DateTime.now();
+
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       setState(() {
         if (_secondsLeft > 0) {
@@ -74,6 +80,8 @@ class _SensorTimerScreenState extends State<SensorTimerScreen> {
   void _stopTimerWithFailure() {
     _timer?.cancel();
     _timer = null;
+    _startTime = null;
+
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
         content: Text('Sesja przerwana! Podniosłeś telefon.'),
@@ -89,20 +97,110 @@ class _SensorTimerScreenState extends State<SensorTimerScreen> {
   void _stopTimerWithSuccess() {
     _timer?.cancel();
     _timer = null;
+
+    final endTime = DateTime.now();
+    final actualStartTime =
+        _startTime ??
+        endTime.subtract(Duration(seconds: widget.sessionDurationSeconds));
+
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
         content: Text('SUKCES! Zdobywasz punkty!'),
         backgroundColor: Colors.green,
       ),
     );
+
     setState(() {
       _points += 10;
       _secondsLeft = widget.sessionDurationSeconds;
+      _startTime = null;
     });
 
     _savePoints();
-
+    _sendSessionToServer(actualStartTime, endTime, 10);
     _evaluateTimerState();
+  }
+
+  Future<void> _sendSessionToServer(
+    DateTime start,
+    DateTime end,
+    int pointsEarned,
+  ) async {
+    final prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('jwt_token');
+
+    if (token == null) return;
+
+    final url = Uri.parse('https://flip-to-focus.tau2c.top/sessions');
+    final bodyData = jsonEncode({
+      'start': start.toUtc().toIso8601String(),
+      'end': end.toUtc().toIso8601String(),
+      'points': pointsEarned,
+    });
+
+    try {
+      http.Response response = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+        body: bodyData,
+      );
+
+      if (response.statusCode == 401) {
+        final refreshed = await _refreshAccessToken();
+
+        if (refreshed) {
+          token = prefs.getString('jwt_token');
+          response = await http.post(
+            url,
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer $token',
+            },
+            body: bodyData,
+          );
+        } else {
+          return;
+        }
+      }
+
+      if (response.statusCode >= 200 && response.statusCode < 300) {
+      } else {}
+    } catch (e) {
+      //
+    }
+  }
+
+  Future<bool> _refreshAccessToken() async {
+    final prefs = await SharedPreferences.getInstance();
+    final refreshToken = prefs.getString('refresh_token');
+
+    if (refreshToken == null) return false;
+
+    try {
+      final url = Uri.parse('https://flip-to-focus.tau2c.top/auth/token');
+      final response = await http.post(
+        url,
+        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+        body: {'grant_type': 'refresh_token', 'refresh_token': refreshToken},
+      );
+
+      if (response.statusCode == 200) {
+        final responseData = jsonDecode(response.body);
+        await prefs.setString('jwt_token', responseData['access_token']);
+
+        if (responseData.containsKey('refresh_token')) {
+          await prefs.setString('refresh_token', responseData['refresh_token']);
+        }
+        return true;
+      }
+    } catch (e) {
+      //
+    }
+
+    return false;
   }
 
   @override
