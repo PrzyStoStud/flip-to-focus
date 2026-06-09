@@ -3,11 +3,18 @@ import datetime
 from db import SessionLocal
 from fastapi import APIRouter, Depends, HTTPException
 from models.sessions import Session
+from pydantic import BaseModel
 from sqlalchemy.orm import Session as DBSession
 
 from routes.auth import UserModel, get_current_user
 
 router = APIRouter()
+
+
+class SessionCreate(BaseModel):
+    start: datetime.datetime
+    end: datetime.datetime
+    points: int = 0
 
 
 def get_db():
@@ -57,11 +64,17 @@ async def delete_session(
 
 @router.post("")
 async def create_session(
-    current_user: UserModel = Depends(get_current_user), db: DBSession = Depends(get_db)
+    session_data: SessionCreate,
+    current_user: UserModel = Depends(get_current_user),
+    db: DBSession = Depends(get_db),
 ):
     """Create a new session."""
-    now = datetime.datetime.now()
-    new_session = Session(user_id=current_user.id, start=now, end=now)
+    new_session = Session(
+        user_id=current_user.id,
+        start=session_data.start,
+        end=session_data.end,
+        points=session_data.points,
+    )
     db.add(new_session)
     db.commit()
     db.refresh(new_session)
