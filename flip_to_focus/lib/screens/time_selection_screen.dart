@@ -36,7 +36,7 @@ class TimeSelectionScreen extends StatelessWidget {
         actions: [
           IconButton(
             icon: const Icon(Icons.logout),
-            onPressed: () => _logout(context), 
+            onPressed: () => _logout(context),
           ),
         ],
       ),
