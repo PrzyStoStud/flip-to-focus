@@ -394,3 +394,12 @@ def test_refresh_token_revoked():
             data={"grant_type": "refresh_token", "refresh_token": refresh_token},
         )
         assert refresh_res.status_code == 401
+
+
+def test_info_endpoint():
+    with Tc(app) as client:
+        response = client.get("/info")
+        assert response.status_code == 200
+        data = response.json()
+        assert "server_version" in data
+        assert "api_version" in data
