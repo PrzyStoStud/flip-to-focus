@@ -6,7 +6,8 @@ import 'time_selection_screen.dart';
 import 'register_screen.dart';
 
 class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key});
+  final http.Client? httpClient; // Dodaj to
+  const LoginScreen({super.key, this.httpClient}); // Dodaj to
 
   @override
   State<LoginScreen> createState() => _LoginScreenState();
@@ -35,8 +36,8 @@ class _LoginScreenState extends State<LoginScreen> {
 
     try {
       final url = Uri.parse('https://flip-to-focus.tau2c.top/auth/token');
-
-      final response = await http.post(
+      final client = widget.httpClient ?? http.Client();
+      final response = await client.post(
         url,
         headers: {'Content-Type': 'application/x-www-form-urlencoded'},
         body: {
