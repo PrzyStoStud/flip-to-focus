@@ -16,6 +16,7 @@ RUN mkdir -p /app/data
 
 # Copy the rest of the application
 COPY . .
+RUN rm -rf .venv .ruff_cache .pytest_cache .mypy_cache
 
 # Expose the port the app runs on
 EXPOSE 8000
