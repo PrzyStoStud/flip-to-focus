@@ -239,6 +239,11 @@ def test_create_session():
         response = client.post(
             "/sessions",
             headers={"Authorization": f"Bearer {token}"},
+            json={
+                "start": "2023-01-01T12:00:00",
+                "end": "2023-01-01T13:00:00",
+                "points": 10,
+            },
         )
         assert response.status_code == 200
         data = response.json()
@@ -263,8 +268,24 @@ def test_list_sessions():
         token = login_res.json()["access_token"]
 
         # Create two sessions
-        client.post("/sessions", headers={"Authorization": f"Bearer {token}"})
-        client.post("/sessions", headers={"Authorization": f"Bearer {token}"})
+        client.post(
+            "/sessions",
+            headers={"Authorization": f"Bearer {token}"},
+            json={
+                "start": "2023-01-01T12:00:00",
+                "end": "2023-01-01T13:00:00",
+                "points": 10,
+            },
+        )
+        client.post(
+            "/sessions",
+            headers={"Authorization": f"Bearer {token}"},
+            json={
+                "start": "2023-01-02T12:00:00",
+                "end": "2023-01-02T13:00:00",
+                "points": 20,
+            },
+        )
 
         response = client.get(
             "/sessions/list",
@@ -291,7 +312,13 @@ def test_get_session_by_id():
         token = login_res.json()["access_token"]
 
         create_res = client.post(
-            "/sessions", headers={"Authorization": f"Bearer {token}"}
+            "/sessions",
+            headers={"Authorization": f"Bearer {token}"},
+            json={
+                "start": "2023-01-01T12:00:00",
+                "end": "2023-01-01T13:00:00",
+                "points": 10,
+            },
         )
         session_id = create_res.json()["id"]
 
@@ -320,7 +347,13 @@ def test_delete_session():
         token = login_res.json()["access_token"]
 
         create_res = client.post(
-            "/sessions", headers={"Authorization": f"Bearer {token}"}
+            "/sessions",
+            headers={"Authorization": f"Bearer {token}"},
+            json={
+                "start": "2023-01-01T12:00:00",
+                "end": "2023-01-01T13:00:00",
+                "points": 10,
+            },
         )
         session_id = create_res.json()["id"]
 
