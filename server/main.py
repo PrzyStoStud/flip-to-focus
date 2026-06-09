@@ -8,7 +8,7 @@ from fastapi import FastAPI, Request
 from routes import auth, sessions
 
 SERVER_VERSION = "1.0.0"
-API_VERSION = "1.1.0"
+API_VERSION = "1.2.0"
 
 _server_version = os.environ.get("SERVER_VERSION")
 if _server_version:
