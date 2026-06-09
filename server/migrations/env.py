@@ -2,6 +2,7 @@ from logging.config import fileConfig
 
 from alembic import context
 from db import Base
+from models.refresh_token import RefreshToken  # noqa: F401
 from models.sessions import Session  # noqa: F401
 from models.user import User  # noqa: F401
 from sqlalchemy import engine_from_config, pool
