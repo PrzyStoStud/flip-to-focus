@@ -12,8 +12,6 @@ pushd "$ROOT_DIR/flip_to_focus"
 dart format .
 flutter analyze
 
-git add .
-
 popd
 
 echo "==> Backend checks"
@@ -22,7 +20,5 @@ pushd "$ROOT_DIR/server"
 ruff check .
 mypy .
 black .
-
-git add .
 
 popd
