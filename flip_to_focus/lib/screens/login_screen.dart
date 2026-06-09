@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'time_selection_screen.dart';
+import 'register_screen.dart';
 
 class LoginScreen extends StatelessWidget {
   const LoginScreen({super.key});
@@ -55,6 +56,18 @@ class LoginScreen extends StatelessWidget {
                     minimumSize: const Size(double.infinity, 50),
                   ),
                   child: const Text('ZALOGUJ'),
+                ),
+                const SizedBox(height: 16),
+                TextButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const RegisterScreen(),
+                      ),
+                    );
+                  },
+                  child: const Text('Nie masz konta? Zarejestruj się!'),
                 ),
               ],
             ),
