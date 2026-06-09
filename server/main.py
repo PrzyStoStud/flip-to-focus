@@ -10,6 +10,10 @@ from routes import auth, sessions
 SERVER_VERSION = "1.0.0"
 API_VERSION = "1.1.0"
 
+_server_version = os.environ.get("SERVER_VERSION")
+if _server_version:
+    SERVER_VERSION = _server_version
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
