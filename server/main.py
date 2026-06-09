@@ -7,6 +7,9 @@ from alembic.config import Config
 from fastapi import FastAPI, Request
 from routes import auth, sessions
 
+SERVER_VERSION = "1.0.0"
+API_VERSION = "1.1.0"
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -18,7 +21,15 @@ async def lifespan(app: FastAPI):
     yield
 
 
-app = FastAPI(title="Flip to Focus", version="1.0.0", lifespan=lifespan)
+app = FastAPI(title="Flip to Focus", version=API_VERSION, lifespan=lifespan)
+
+
+@app.get("/info", tags=["info"])
+async def get_info():
+    return {
+        "server_version": SERVER_VERSION,
+        "api_version": API_VERSION,
+    }
 
 
 @app.middleware("http")
