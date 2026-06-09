@@ -41,7 +41,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
       if (!mounted) return;
 
-      if (response.statusCode == 200) {
+      if (response.statusCode == 200 || response.statusCode == 201) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('SUKCES! Konto utworzone. Możesz się zalogować.'),
@@ -49,6 +49,17 @@ class _RegisterScreenState extends State<RegisterScreen> {
           ),
         );
         Navigator.pop(context);
+      } else if (response.statusCode == 400) {
+        final responseData = jsonDecode(response.body);
+        final errorMessage =
+            responseData['detail'] ?? 'Konto już istnieje lub błędne dane.';
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Błąd: $errorMessage'),
+            backgroundColor: Colors.orange,
+          ),
+        );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
