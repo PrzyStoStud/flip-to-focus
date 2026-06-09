@@ -8,7 +8,7 @@ from pwdlib import PasswordHash
 # Configuration
 SECRET_KEY = os.environ.get("API_SECRET_KEY", "your-secret-key")
 ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 1
+ACCESS_TOKEN_EXPIRE_MINUTES = 30
 REFRESH_TOKEN_EXPIRE_DAYS = 7
 
 # Password Hashing
