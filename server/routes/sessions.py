@@ -4,6 +4,7 @@ from db import SessionLocal
 from fastapi import APIRouter, Depends, HTTPException
 from models.sessions import Session
 from pydantic import BaseModel
+from sqlalchemy import func
 from sqlalchemy.orm import Session as DBSession
 
 from routes.auth import UserModel, get_current_user
@@ -32,6 +33,20 @@ async def list_sessions(
 ):
     """List all sessions."""
     return db.query(Session).all()
+
+
+@router.get("/points")
+async def get_all_user_session_points(
+    current_user: UserModel = Depends(get_current_user),
+    db: DBSession = Depends(get_db),
+):
+    """Get the sum of points for all sessions of the current user."""
+    total_points = (
+        db.query(func.sum(Session.points))
+        .filter(Session.user_id == current_user.id)
+        .scalar()
+    )
+    return {"points": total_points or 0}
 
 
 @router.get("/{id}")

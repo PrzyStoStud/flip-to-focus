@@ -436,3 +436,56 @@ def test_info_endpoint():
         data = response.json()
         assert "server_version" in data
         assert "api_version" in data
+
+
+def test_get_all_user_session_points():
+    with Tc(app) as client:
+        client.post(
+            "/auth/register",
+            json={"email": "points@example.com", "password": "password123"},
+        )
+        login_res = client.post(
+            "/auth/token",
+            data={
+                "grant_type": "password",
+                "username": "points@example.com",
+                "password": "password123",
+            },
+        )
+        token = login_res.json()["access_token"]
+
+        # Create some sessions with points
+        client.post(
+            "/sessions",
+            headers={"Authorization": f"Bearer {token}"},
+            json={
+                "start": "2023-01-01T12:00:00",
+                "end": "2023-01-01T13:00:00",
+                "points": 10,
+            },
+        )
+        client.post(
+            "/sessions",
+            headers={"Authorization": f"Bearer {token}"},
+            json={
+                "start": "2023-01-02T12:00:00",
+                "end": "2023-01-02T13:00:00",
+                "points": 20,
+            },
+        )
+        client.post(
+            "/sessions",
+            headers={"Authorization": f"Bearer {token}"},
+            json={
+                "start": "2023-01-03T12:00:00",
+                "end": "2023-01-03T13:00:00",
+                "points": 5,
+            },
+        )
+
+        response = client.get(
+            "/sessions/points",
+            headers={"Authorization": f"Bearer {token}"},
+        )
+        assert response.status_code == 200
+        assert response.json()["points"] == 35
