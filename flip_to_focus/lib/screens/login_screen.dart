@@ -6,8 +6,8 @@ import 'time_selection_screen.dart';
 import 'register_screen.dart';
 
 class LoginScreen extends StatefulWidget {
-  final http.Client? httpClient; // Dodaj to
-  const LoginScreen({super.key, this.httpClient}); // Dodaj to
+  final http.Client? httpClient; 
+  const LoginScreen({super.key, this.httpClient}); 
 
   @override
   State<LoginScreen> createState() => _LoginScreenState();

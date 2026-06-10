@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'sensor_timer_screen.dart';
 import 'login_screen.dart';
+import 'profile_screen.dart';
+
 import 'package:shared_preferences/shared_preferences.dart';
 
 class TimeSelectionScreen extends StatelessWidget {
@@ -37,6 +39,15 @@ class TimeSelectionScreen extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Wybierz czas skupienia'),
         actions: [
+          IconButton(
+            icon: const Icon(Icons.person),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const ProfileScreen()),
+              );
+            },
+          ),
           IconButton(
             icon: const Icon(Icons.logout),
             onPressed: () => _logout(context),
