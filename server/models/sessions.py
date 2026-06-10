@@ -2,7 +2,7 @@ import uuid
 from datetime import datetime
 
 from db import Base
-from sqlalchemy import DateTime, ForeignKey, func
+from sqlalchemy import DateTime, ForeignKey, Integer, func
 from sqlalchemy.orm import Mapped, mapped_column
 
 
@@ -15,3 +15,4 @@ class Session(Base):
 
     start: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
     end: Mapped[datetime] = mapped_column(DateTime, nullable=True)
+    points: Mapped[int] = mapped_column(Integer, nullable=False, server_default="0")
