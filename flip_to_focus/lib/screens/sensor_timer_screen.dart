@@ -177,7 +177,9 @@ class _SensorTimerScreenState extends State<SensorTimerScreen> {
       if (response.statusCode >= 200 && response.statusCode < 300) {
       } else {}
     } catch (e) {
-      //
+      final offlineList = prefs.getStringList('offline_sessions') ?? [];
+      offlineList.add(bodyData);
+      await prefs.setStringList('offline_sessions', offlineList);
     }
   }
 

@@ -34,6 +34,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
       if (token == null) return;
 
+      await _syncOfflineSessions(token);
+
       final pointsUrl = Uri.parse(
         'https://flip-to-focus.tau2c.top/sessions/points',
       );
@@ -67,6 +69,43 @@ class _ProfileScreenState extends State<ProfileScreen> {
     } catch (e) {
       _loadLocalData('Błąd połączenia. Wyświetlam dane offline.');
     }
+  }
+
+  Future<void> _syncOfflineSessions(String token) async {
+    final prefs = await SharedPreferences.getInstance();
+    final offlineList = prefs.getStringList('offline_sessions') ?? [];
+
+    if (offlineList.isEmpty) return; // Brak zaległych sesji
+
+    final url = Uri.parse('https://flip-to-focus.tau2c.top/sessions');
+    List<String> remainingSessions = [];
+
+    // Pętla wysyła zaległe sesje jedna po drugiej
+    for (String sessionData in offlineList) {
+      try {
+        final response = await http.post(
+          url,
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer $token',
+          },
+          body: sessionData,
+        );
+
+        if (response.statusCode >= 200 && response.statusCode < 300) {
+          // Sukces! Sesja wysłana, pomijamy dodawanie jej do remainingSessions
+        } else {
+          // Błąd backendu (np. 500), zostawiamy w kolejce na później
+          remainingSessions.add(sessionData);
+        }
+      } catch (e) {
+        // Znowu brak internetu, zostawiamy w kolejce
+        remainingSessions.add(sessionData);
+      }
+    }
+
+    // Nadpisujemy listę tylko tymi sesjami, których nie udało się wysłać
+    await prefs.setStringList('offline_sessions', remainingSessions);
   }
 
   Future<void> _loadLocalData(String message) async {

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 import 'sensor_timer_screen.dart';
 import 'login_screen.dart';
 import 'profile_screen.dart';
@@ -21,9 +22,54 @@ class TimeSelectionScreen extends StatelessWidget {
   Future<void> _logout(BuildContext context) async {
     final prefs = await SharedPreferences.getInstance();
 
+    final offlineList = prefs.getStringList('offline_sessions') ?? [];
+
+    if (offlineList.isNotEmpty) {
+      if (!context.mounted) return;
+      final bool? shouldForceLogout = await showDialog<bool>(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Niezapisane postępy!'),
+          content: const Text(
+            'Masz punkty zdobyte w trybie offline, które nie zostały jeszcze wysłane na serwer. '
+            'Połącz się z internetem i wejdź w swój Profil, aby je zapisać. '
+            '\n\nJeśli wylogujesz się teraz, te punkty PRZEPADNĄ. Czy na pewno chcesz się wylogować?',
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context, false),
+              child: const Text('Anuluj'),
+            ),
+            TextButton(
+              onPressed: () => Navigator.pop(context, true),
+              style: TextButton.styleFrom(foregroundColor: Colors.red),
+              child: const Text('Wyloguj i strać punkty'),
+            ),
+          ],
+        ),
+      );
+
+      if (shouldForceLogout != true) return;
+    }
+
+    final refreshToken = prefs.getString('refresh_token');
+    if (refreshToken != null) {
+      try {
+        final url = Uri.parse('https://flip-to-focus.tau2c.top/auth/logout');
+        await http.post(
+          url,
+          headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+          body: {'refresh_token': refreshToken},
+        );
+      } catch (e) {
+        //
+      }
+    }
+
     await prefs.remove('jwt_token');
     await prefs.remove('refresh_token');
     await prefs.remove('total_points');
+    await prefs.remove('offline_sessions');
 
     if (!context.mounted) return;
 
