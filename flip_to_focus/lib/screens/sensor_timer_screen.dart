@@ -18,7 +18,8 @@ class _SensorTimerScreenState extends State<SensorTimerScreen> {
   double _zAxis = 0.0;
   bool _isFlat = false;
   late int _secondsLeft;
-  int _points = 0;
+  int _sessionPoints = 0;
+  DateTime? _globalStartTime;
   Timer? _timer;
   StreamSubscription<AccelerometerEvent>? _sensorSubscription;
 
@@ -28,8 +29,6 @@ class _SensorTimerScreenState extends State<SensorTimerScreen> {
   void initState() {
     super.initState();
     _secondsLeft = widget.sessionDurationSeconds;
-
-    _loadSavedPoints();
 
     _sensorSubscription = accelerometerEventStream().listen((
       AccelerometerEvent event,
@@ -43,18 +42,6 @@ class _SensorTimerScreenState extends State<SensorTimerScreen> {
     });
   }
 
-  Future<void> _loadSavedPoints() async {
-    final prefs = await SharedPreferences.getInstance();
-    setState(() {
-      _points = prefs.getInt('total_points') ?? 0;
-    });
-  }
-
-  Future<void> _savePoints() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setInt('total_points', _points);
-  }
-
   void _evaluateTimerState() {
     if (_isFlat && _timer == null) {
       _startTimer();
@@ -65,6 +52,7 @@ class _SensorTimerScreenState extends State<SensorTimerScreen> {
 
   void _startTimer() {
     _startTime ??= DateTime.now();
+    _globalStartTime ??= DateTime.now();
 
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       setState(() {
@@ -77,17 +65,44 @@ class _SensorTimerScreenState extends State<SensorTimerScreen> {
     });
   }
 
-  void _stopTimerWithFailure() {
+  void _stopTimerWithFailure() async {
     _timer?.cancel();
     _timer = null;
     _startTime = null;
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Sesja przerwana! Podniosłeś telefon.'),
-        backgroundColor: Colors.red,
-      ),
-    );
+    if (_sessionPoints > 0) {
+      final endTime = DateTime.now();
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Koniec nauki. Wysyłam $_sessionPoints pkt na serwer!'),
+          backgroundColor: Colors.blue,
+        ),
+      );
+
+      final prefs = await SharedPreferences.getInstance();
+      int currentTotal = prefs.getInt('total_points') ?? 0;
+      await prefs.setInt('total_points', currentTotal + _sessionPoints);
+
+      _sendSessionToServer(
+        _globalStartTime ?? endTime,
+        endTime,
+        _sessionPoints,
+      );
+
+      setState(() {
+        _sessionPoints = 0;
+        _globalStartTime = null;
+      });
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Sesja przerwana! Podniosłeś telefon za wcześnie.'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      _globalStartTime = null;
+    }
 
     setState(() {
       _secondsLeft = widget.sessionDurationSeconds;
@@ -97,27 +112,20 @@ class _SensorTimerScreenState extends State<SensorTimerScreen> {
   void _stopTimerWithSuccess() {
     _timer?.cancel();
     _timer = null;
-
-    final endTime = DateTime.now();
-    final actualStartTime =
-        _startTime ??
-        endTime.subtract(Duration(seconds: widget.sessionDurationSeconds));
+    _startTime = null;
 
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
-        content: Text('SUKCES! Zdobywasz punkty!'),
+        content: Text('Ukończono cykl! Zbierasz punkty. Nie podnoś telefonu!'),
         backgroundColor: Colors.green,
       ),
     );
 
     setState(() {
-      _points += 10;
+      _sessionPoints += 10;
       _secondsLeft = widget.sessionDurationSeconds;
-      _startTime = null;
     });
 
-    _savePoints();
-    _sendSessionToServer(actualStartTime, endTime, 10);
     _evaluateTimerState();
   }
 
@@ -227,7 +235,7 @@ class _SensorTimerScreenState extends State<SensorTimerScreen> {
             child: Padding(
               padding: const EdgeInsets.only(right: 16.0),
               child: Text(
-                'Punkty: $_points',
+                'Ta sesja: +$_sessionPoints pkt',
                 style: const TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
