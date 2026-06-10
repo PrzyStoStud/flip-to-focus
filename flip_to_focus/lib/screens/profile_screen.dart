@@ -12,6 +12,8 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen> {
   int _totalPoints = 0;
+  int _unsentPoints = 0;
+  int _unsentSessionsCount = 0;
   List<dynamic> _history = [];
   bool _isLoading = true;
   String _errorMsg = '';
@@ -63,6 +65,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         });
 
         await prefs.setInt('total_points', _totalPoints);
+        await _calculateOfflineStats();
       } else {
         _loadLocalData('Błąd serwera (Kod: ${pointsResponse.statusCode})');
       }
@@ -75,12 +78,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
     final prefs = await SharedPreferences.getInstance();
     final offlineList = prefs.getStringList('offline_sessions') ?? [];
 
-    if (offlineList.isEmpty) return; // Brak zaległych sesji
+    if (offlineList.isEmpty) return;
 
     final url = Uri.parse('https://flip-to-focus.tau2c.top/sessions');
     List<String> remainingSessions = [];
 
-    // Pętla wysyła zaległe sesje jedna po drugiej
     for (String sessionData in offlineList) {
       try {
         final response = await http.post(
@@ -93,18 +95,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
         );
 
         if (response.statusCode >= 200 && response.statusCode < 300) {
-          // Sukces! Sesja wysłana, pomijamy dodawanie jej do remainingSessions
         } else {
-          // Błąd backendu (np. 500), zostawiamy w kolejce na później
           remainingSessions.add(sessionData);
         }
       } catch (e) {
-        // Znowu brak internetu, zostawiamy w kolejce
         remainingSessions.add(sessionData);
       }
     }
 
-    // Nadpisujemy listę tylko tymi sesjami, których nie udało się wysłać
     await prefs.setStringList('offline_sessions', remainingSessions);
   }
 
@@ -115,6 +113,29 @@ class _ProfileScreenState extends State<ProfileScreen> {
       _errorMsg = message;
       _isLoading = false;
     });
+    await _calculateOfflineStats();
+  }
+
+  Future<void> _calculateOfflineStats() async {
+    final prefs = await SharedPreferences.getInstance();
+    final offlineList = prefs.getStringList('offline_sessions') ?? [];
+
+    int tempPoints = 0;
+    for (String sessionStr in offlineList) {
+      try {
+        final Map<String, dynamic> sessionData = jsonDecode(sessionStr);
+        tempPoints += (sessionData['points'] as int?) ?? 0;
+      } catch (e) {
+        //
+      }
+    }
+
+    if (mounted) {
+      setState(() {
+        _unsentSessionsCount = offlineList.length;
+        _unsentPoints = tempPoints;
+      });
+    }
   }
 
   Future<void> _deleteSession(String sessionId) async {
@@ -235,6 +256,65 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ),
                     ),
                   ),
+                  if (_unsentSessionsCount > 0) ...[
+                    const SizedBox(height: 16),
+                    Card(
+                      color: Colors.orange.withValues(alpha: 0.15),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16),
+                        side: BorderSide(
+                          color: Colors.orange.shade300,
+                          width: 1,
+                        ),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Column(
+                          children: [
+                            const Row(
+                              children: [
+                                Icon(Icons.cloud_off, color: Colors.orange),
+                                SizedBox(width: 8),
+                                Text(
+                                  'Oczekujące na synchronizację',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.orange,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 12),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text('Zaległe sesje: $_unsentSessionsCount'),
+                                Text(
+                                  '+ $_unsentPoints pkt',
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 8),
+                            Align(
+                              alignment: Alignment.centerLeft,
+                              child: Text(
+                                'Zapisano na serwerze online: ${_totalPoints - _unsentPoints} pkt',
+                                style: const TextStyle(
+                                  fontSize: 12,
+                                  color: Colors.grey,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                  const SizedBox(height: 24),
+
                   const SizedBox(height: 24),
 
                   const Align(
