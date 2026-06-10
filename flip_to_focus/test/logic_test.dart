@@ -53,7 +53,7 @@ void main() {
       );
 
       if (response.statusCode == 200) {
-        await prefs.setString('jwt_token', 'token'); 
+        await prefs.setString('jwt_token', 'token');
       }
 
       expect(prefs.getString('jwt_token'), isNull);
@@ -91,12 +91,10 @@ void main() {
       '5. Dodawanie kolejnych sesji nie nadpisuje starych w kolejce offline',
       () async {
         final prefs = await SharedPreferences.getInstance();
-        await prefs.setStringList('offline_sessions', [
-          '{"points": 10}',
-        ]);
+        await prefs.setStringList('offline_sessions', ['{"points": 10}']);
 
         final offlineList = prefs.getStringList('offline_sessions') ?? [];
-        offlineList.add('{"points": 20}'); 
+        offlineList.add('{"points": 20}');
         await prefs.setStringList('offline_sessions', offlineList);
 
         final savedList = prefs.getStringList('offline_sessions');
@@ -177,10 +175,7 @@ void main() {
         final String testSessionId = 'abc-123';
 
         final client = MockClient((request) async {
-          expect(
-            request.url.path,
-            '/sessions/abc-123',
-          ); 
+          expect(request.url.path, '/sessions/abc-123');
           expect(request.method, 'DELETE');
           return http.Response('{}', 200);
         });
