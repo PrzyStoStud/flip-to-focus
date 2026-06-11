@@ -1,13 +1,32 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:permission_handler/permission_handler.dart';
+
 import 'sensor_timer_screen.dart';
 import 'login_screen.dart';
 import 'profile_screen.dart';
 
-import 'package:shared_preferences/shared_preferences.dart';
-
-class TimeSelectionScreen extends StatelessWidget {
+class TimeSelectionScreen extends StatefulWidget {
   const TimeSelectionScreen({super.key});
+
+  @override
+  State<TimeSelectionScreen> createState() => _TimeSelectionScreenState();
+}
+
+class _TimeSelectionScreenState extends State<TimeSelectionScreen> {
+  @override
+  void initState() {
+    super.initState();
+    _requestBatteryPermission();
+  }
+
+  Future<void> _requestBatteryPermission() async {
+    final status = await Permission.ignoreBatteryOptimizations.status;
+    if (status.isDenied) {
+      await Permission.ignoreBatteryOptimizations.request();
+    }
+  }
 
   void _startSession(BuildContext context, int minutes) {
     Navigator.push(
