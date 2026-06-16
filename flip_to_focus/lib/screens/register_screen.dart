@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import '../config.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -31,7 +32,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     setState(() => _isLoading = true);
 
     try {
-      final url = Uri.parse('https://flip-to-focus.tau2c.top/auth/register');
+      final url = Uri.parse('${Config.apiUrl}/auth/register');
 
       final response = await http.post(
         url,

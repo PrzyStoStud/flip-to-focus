@@ -6,6 +6,7 @@ import 'package:permission_handler/permission_handler.dart';
 import 'sensor_timer_screen.dart';
 import 'login_screen.dart';
 import 'profile_screen.dart';
+import '../config.dart';
 
 class TimeSelectionScreen extends StatefulWidget {
   const TimeSelectionScreen({super.key});
@@ -74,7 +75,7 @@ class _TimeSelectionScreenState extends State<TimeSelectionScreen> {
     final refreshToken = prefs.getString('refresh_token');
     if (refreshToken != null) {
       try {
-        final url = Uri.parse('https://flip-to-focus.tau2c.top/auth/logout');
+        final url = Uri.parse('${Config.apiUrl}/auth/logout');
         await http.post(
           url,
           headers: {'Content-Type': 'application/x-www-form-urlencoded'},

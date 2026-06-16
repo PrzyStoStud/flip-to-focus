@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'time_selection_screen.dart';
 import 'register_screen.dart';
+import '../config.dart';
 
 class LoginScreen extends StatefulWidget {
   final http.Client? httpClient;
@@ -35,7 +36,7 @@ class _LoginScreenState extends State<LoginScreen> {
     setState(() => _isLoading = true);
 
     try {
-      final url = Uri.parse('https://flip-to-focus.tau2c.top/auth/token');
+      final url = Uri.parse('${Config.apiUrl}/auth/token');
       final client = widget.httpClient ?? http.Client();
       final response = await client.post(
         url,

@@ -4,6 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'dart:async';
+import '../config.dart';
 
 class SensorTimerScreen extends StatefulWidget {
   final int sessionDurationSeconds;
@@ -139,7 +140,7 @@ class _SensorTimerScreenState extends State<SensorTimerScreen> {
 
     if (token == null) return;
 
-    final url = Uri.parse('https://flip-to-focus.tau2c.top/sessions');
+    final url = Uri.parse('${Config.apiUrl}/sessions');
     final bodyData = jsonEncode({
       'start': start.toUtc().toIso8601String(),
       'end': end.toUtc().toIso8601String(),
@@ -190,7 +191,7 @@ class _SensorTimerScreenState extends State<SensorTimerScreen> {
     if (refreshToken == null) return false;
 
     try {
-      final url = Uri.parse('https://flip-to-focus.tau2c.top/auth/token');
+      final url = Uri.parse('${Config.apiUrl}/auth/token');
       final response = await http.post(
         url,
         headers: {'Content-Type': 'application/x-www-form-urlencoded'},

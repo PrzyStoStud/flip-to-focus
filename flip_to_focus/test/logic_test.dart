@@ -3,6 +3,7 @@ import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
+import 'package:flip_to_focus/config.dart';
 
 void main() {
   setUp(() {
@@ -26,7 +27,7 @@ void main() {
         });
 
         final response = await client.post(
-          Uri.parse('https://flip-to-focus.tau2c.top/auth/token'),
+          Uri.parse('${Config.apiUrl}/auth/token'),
         );
         final data = jsonDecode(response.body);
 
@@ -49,7 +50,7 @@ void main() {
       });
 
       final response = await client.post(
-        Uri.parse('https://flip-to-focus.tau2c.top/auth/token'),
+        Uri.parse('${Config.apiUrl}/auth/token'),
       );
 
       if (response.statusCode == 200) {
@@ -127,7 +128,7 @@ void main() {
       });
 
       final response = await client.post(
-        Uri.parse('https://flip-to-focus.tau2c.top/auth/register'),
+        Uri.parse('${Config.apiUrl}/auth/register'),
       );
       expect(response.statusCode, inInclusiveRange(200, 201));
       expect(jsonDecode(response.body)['email'], 'test@test.com');
@@ -144,7 +145,7 @@ void main() {
         });
 
         final response = await client.post(
-          Uri.parse('https://flip-to-focus.tau2c.top/auth/register'),
+          Uri.parse('${Config.apiUrl}/auth/register'),
         );
         expect(response.statusCode, 400);
       },
@@ -161,7 +162,7 @@ void main() {
       });
 
       final response = await client.get(
-        Uri.parse('https://flip-to-focus.tau2c.top/sessions/points'),
+        Uri.parse('${Config.apiUrl}/sessions/points'),
         headers: {'Authorization': 'Bearer proper_token'},
       );
 
@@ -181,7 +182,7 @@ void main() {
         });
 
         final response = await client.delete(
-          Uri.parse('https://flip-to-focus.tau2c.top/sessions/$testSessionId'),
+          Uri.parse('${Config.apiUrl}/sessions/$testSessionId'),
         );
 
         expect(response.statusCode, 200);
