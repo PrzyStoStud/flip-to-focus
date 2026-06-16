@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../config.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -38,17 +39,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
       await _syncOfflineSessions(token);
 
-      final pointsUrl = Uri.parse(
-        'https://flip-to-focus.tau2c.top/sessions/points',
-      );
+      final pointsUrl = Uri.parse('${Config.apiUrl}/sessions/points');
       final pointsResponse = await http.get(
         pointsUrl,
         headers: {'Authorization': 'Bearer $token'},
       );
 
-      final listUrl = Uri.parse(
-        'https://flip-to-focus.tau2c.top/sessions/list',
-      );
+      final listUrl = Uri.parse('${Config.apiUrl}/sessions/list');
       final listResponse = await http.get(
         listUrl,
         headers: {'Authorization': 'Bearer $token'},
@@ -80,7 +77,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
     if (offlineList.isEmpty) return;
 
-    final url = Uri.parse('https://flip-to-focus.tau2c.top/sessions');
+    final url = Uri.parse('${Config.apiUrl}/sessions');
     List<String> remainingSessions = [];
 
     for (String sessionData in offlineList) {
@@ -143,9 +140,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       final prefs = await SharedPreferences.getInstance();
       final token = prefs.getString('jwt_token');
 
-      final url = Uri.parse(
-        'https://flip-to-focus.tau2c.top/sessions/$sessionId',
-      );
+      final url = Uri.parse('${Config.apiUrl}/sessions/$sessionId');
       final response = await http.delete(
         url,
         headers: {'Authorization': 'Bearer $token'},
