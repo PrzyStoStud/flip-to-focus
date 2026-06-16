@@ -26,5 +26,8 @@ RUN rm -rf .venv .ruff_cache .pytest_cache .mypy_cache
 # Expose the port the app runs on
 EXPOSE 8000
 
+# Make start script executable
+RUN chmod +x /app/start.sh
+
 # Command to run the application
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["/app/start.sh"]

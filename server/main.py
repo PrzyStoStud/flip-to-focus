@@ -36,8 +36,14 @@ async def get_info():
     }
 
 
+ENVIRONMENT = os.environ.get("ENVIRONMENT", "production")
+
+
 @app.middleware("http")
 async def log_requests(request: Request, call_next):
+    if ENVIRONMENT != "development":
+        return await call_next(request)
+
     start_time = time.time()
     body = await request.body()
     print(f"DEBUG: Request {request.method} {request.url}")
