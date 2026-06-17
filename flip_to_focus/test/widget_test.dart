@@ -1,30 +1,44 @@
-// This is a basic Flutter widget test.
-//
-// To perform an interaction with a widget in your test, use the WidgetTester
-// utility in the flutter_test package. For example, you can send tap and scroll
-// gestures. You can also use WidgetTester to find child widgets in the widget
-// tree, read text, and verify that the values of widget properties are correct.
-
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:http/http.dart' as http;
+import 'package:flip_to_focus/screens/login_screen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-import 'package:flip_to_focus/main.dart';
+class MockClient extends http.BaseClient {
+  @override
+  Future<http.StreamedResponse> send(http.BaseRequest request) async {
+    final response = http.Response('{"access_token": "fake_test_token"}', 200);
+    return http.StreamedResponse(
+      Stream.value(response.bodyBytes),
+      response.statusCode,
+    );
+  }
+}
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
-    await tester.pumpWidget(const MyApp());
+  TestWidgetsFlutterBinding.ensureInitialized();
 
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
+  testWidgets('Test logowania i przejścia do wyboru czasu', (
+    WidgetTester tester,
+  ) async {
+    SharedPreferences.setMockInitialValues({});
 
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
-    await tester.pump();
+    await tester.pumpWidget(
+      MaterialApp(home: LoginScreen(httpClient: MockClient())),
+    );
 
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
+    final emailField = find.byType(TextField).first;
+    final passwordField = find.byType(TextField).last;
+    final loginButton = find.text('ZALOGUJ');
+
+    await tester.enterText(emailField, 'student@uczelnia.pl');
+    await tester.enterText(passwordField, 'tajnehaslo123');
+
+    await tester.tap(loginButton);
+
+    await tester.pumpAndSettle();
+
+    expect(find.text('Wybierz czas skupienia'), findsOneWidget);
+    expect(find.text('25 Minut (Pomodoro)'), findsOneWidget);
   });
 }

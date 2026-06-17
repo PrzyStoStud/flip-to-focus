@@ -1,15 +1,14 @@
 {
   pkgs ? import <nixpkgs> {
-    config = {
-      allowUnfree = true;
-    };
+    config.allowUnfree = true;
   },
+  androidSdkPath ? "${builtins.getEnv "HOME"}/Android/Sdk",
 }:
-pkgs.mkShell rec {
-  ANDROID_SDK_ROOT = "/home/tau2c/Android/Sdk";
-  ANDROID_HOME = ANDROID_SDK_ROOT;
 
-  buildInputs = with pkgs; [
+pkgs.mkShell {
+  ANDROID_HOME = androidSdkPath;
+
+  packages = with pkgs; [
     # Flutter
     flutter
 
@@ -20,9 +19,16 @@ pkgs.mkShell rec {
 
     # Python
     python312
-    python312Packages.virtualenv
+    python312Packages.venvShellHook
 
-    # General native deps
+    (python312.withPackages (
+      pkgs: with pkgs; [
+        ruff
+        black
+      ]
+    ))
+
+    # Native deps
     pkg-config
     openssl
     libffi
@@ -31,16 +37,17 @@ pkgs.mkShell rec {
     curl
     jq
     httpie
-
-    insomnia
+    bruno
   ];
 
-  shellHook = ''
+  venvDir = "server/.venv";
+
+  postShellHook = ''
     export JAVA_HOME=${pkgs.jdk17}
 
-    export PATH=$ANDROID_SDK_ROOT/emulator:$PATH
-    export PATH=$ANDROID_SDK_ROOT/platform-tools:$PATH
-    export PATH=$ANDROID_SDK_ROOT/cmdline-tools/latest/bin:$PATH
+    export PATH=$ANDROID_HOME/emulator:$PATH
+    export PATH=$ANDROID_HOME/platform-tools:$PATH
+    export PATH=$ANDROID_HOME/cmdline-tools/latest/bin:$PATH
 
     export LD_LIBRARY_PATH=${
       pkgs.lib.makeLibraryPath [
@@ -48,5 +55,10 @@ pkgs.mkShell rec {
         pkgs.libffi
       ]
     }
+  '';
+
+  postVenvCreation = ''
+    python -m ensurepip --default-pip
+    pip install -r server/requirements.txt ruff mypy black pytest
   '';
 }

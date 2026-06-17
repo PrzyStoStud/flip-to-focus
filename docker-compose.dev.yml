@@ -1,0 +1,23 @@
+services:
+  server:
+    build: ./server
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=sqlite:////app/data/flip_to_focus.db
+      - API_SECRET_KEY=development_secret_key
+      - PYTHONUNBUFFERED=1
+    volumes:
+      - ./server/:/app/
+      - server_data_dev:/app/data
+    develop:
+      watch:
+        - action: sync
+          path: ./server
+          target: /app
+        - action: rebuild
+          path: ./server/requirements.txt
+
+volumes:
+  server_data_dev:
+    driver: local
