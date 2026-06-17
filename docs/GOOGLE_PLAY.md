@@ -1,36 +1,47 @@
-# Google Play Store Listing
+# Sklep Google Play - Karta Aplikacji
 
-**App Name:** FlipToFocus: Offline Pomodoro  
-**Short Description:** Flip your phone face down to start focusing. Avoid distractions and earn points!  
+**Nazwa aplikacji:** FlipToFocus: Offline Pomodoro  
+**Krótki opis:** Odłóż telefon ekranem do dołu i zacznij działać. Unikaj powiadomień, zdobywaj punkty i buduj nawyk pełnego skupienia!
 
-**Full Description:** Struggling to focus while studying? FlipToFocus is here to help you disconnect from digital distractions. Instead of tapping a button on a screen full of notifications, simply select your focus time (15, 25, or 60 minutes) and place your phone face down on the desk. 
+**Pełny opis:** Zmagasz się z brakiem koncentracji podczas nauki lub pracy? FlipToFocus to innowacyjne narzędzie, które pomaga fizycznie odciąć się od cyfrowych rozpraszaczy. Zamiast walczyć z pokusą sprawdzania powiadomień na świecącym ekranie, nasza aplikacja promuje całkowite odłączenie. Wybierz swój cel czasowy (15, 25 lub 60 minut) i po prostu połóż telefon ekranem do dołu na blacie.
 
-If you pick up your phone before the timer ends, the session fails! Complete your sessions successfully to earn points, build your focus habits, and track your progress locally or in the cloud.
+**Jak to działa?** Nasz system korzysta z wbudowanych czujników Twojego urządzenia. Gdy tylko odłożysz telefon, timer automatycznie rozpoczyna odliczanie w tle. Jeśli podniesiesz urządzenie przed upływem wyznaczonego czasu, sesja natychmiast kończy się niepowodzeniem, a Ty tracisz szansę na nagrodę!
 
-**Keywords:** pomodoro, focus, study timer, productivity, adhd, offline timer, offline study.
+**Główne funkcje:** * **Fizyczny wyzwalacz skupienia:** Koniec z klikaniem przycisków. Twoja produktywność zaczyna się w momencie odłożenia telefonu.
+* **Grywalizacja i nagrody:** Ukończ sesje z sukcesem bez dotykania telefonu, aby zbierać punkty i śledzić swój progres.
+* **Tryb Offline-First:** Brak internetu? Żaden problem. Twoje sesje są zapisywane bezpiecznie w pamięci lokalnej urządzenia i automatycznie synchronizowane z chmurą, gdy znów będziesz online.
+* **Minimalistyczny design:** Brak reklam, brak zbędnych powiadomień. Czyste narzędzie do pracy głębokiej.
 
-## Privacy Policy
+**Słowa kluczowe (Keywords):** pomodoro, stoper do nauki, skupienie, produktywność, adhd, timer offline, technika pomodoro, zarządzanie czasem.
 
-Last Updated: 2026-06-16
+---
 
-1. Information We Collect
-We collect the following information when you use the Flip to Focus application:
+## Polityka Prywatności
 
-Account Information: Email address and a securely hashed password during registration.
-Usage Data: Start and end times of focus sessions, and points earned. We use device sensors (accelerometer) locally on your device to determine focus states; raw sensor data is not transmitted to our servers.
-2. How We Use Your Information
-We use your information solely to provide and improve the Flip to Focus service:
+**Ostatnia aktualizacja:** 17 czerwca 2026 r.
 
-To authenticate you and maintain your account.
-To track your focus progress and award points.
-3. Data Storage and Security
-Your data is stored securely on our servers. Passwords are cryptographically hashed and never stored in plain text. We employ industry-standard security measures to protect your information.
+**1. Informacje, które gromadzimy** Korzystanie z aplikacji FlipToFocus wiąże się z przetwarzaniem następujących danych:
+* **Informacje o koncie:** Adres e-mail oraz bezpiecznie zaszyfrowane hasło podawane podczas procesu rejestracji, służące wyłącznie do autoryzacji w systemie.
+* **Dane dotyczące użytkowania:** Czas rozpoczęcia i zakończenia sesji skupienia oraz liczba zdobytych punktów.
+* **Dane z czujników urządzenia (Ważne):** Aplikacja wykorzystuje akcelerometr wbudowany w Twoje urządzenie do określania fizycznej pozycji telefonu (wykrywanie odłożenia ekranem do dołu). **Odczyty z czujników są analizowane wyłącznie lokalnie na Twoim urządzeniu.** Surowe dane pomiarowe z akcelerometru nigdy nie są przesyłane, zapisywane ani przechowywane na naszych serwerach.
 
-4. Third-Party Sharing
-We do not sell, trade, or otherwise transfer your personally identifiable information to outside parties.
+**2. W jakim celu wykorzystujemy Twoje dane** Gromadzone informacje są używane wyłącznie do świadczenia i ulepszania usług aplikacji FlipToFocus:
+* Do tworzenia, bezpiecznej autoryzacji i utrzymywania Twojego profilu.
+* Do śledzenia Twoich postępów w skupieniu, przyznawania punktów za ukończone sesje oraz synchronizacji tych danych między Twoimi urządzeniami.
 
-5. Your Rights
-You have the right to request access to, modification of, or deletion of your personal data. You can delete your account directly through the application.
+**3. Przechowywanie i bezpieczeństwo danych** Twoje dane są przechowywane na bezpiecznych serwerach. Hasła użytkowników są poddawane rygorystycznemu hashowaniu kryptograficznemu przed zapisaniem w bazie danych i nigdy nie są przechowywane w postaci jawnego tekstu. Wdrażamy branżowe standardy zabezpieczeń (m.in. tokeny JWT), aby chronić Twoje informacje przed nieautoryzowanym dostępem.
 
-6. Contact
-If you have any questions about this Privacy Policy, please contact the development team.
+**4. Udostępnianie danych podmiotom trzecim** Zależy nam na Twoim zaufaniu. Nie sprzedajemy, nie wymieniamy ani w żaden inny sposób nie udostępniamy Twoich danych osobowych (w tym adresu e-mail) niepowiązanym podmiotom trzecim w celach reklamowych czy marketingowych.
+
+**5. Prawa użytkownika** Jako użytkownik masz pełne prawo do wglądu w swoje dane, ich modyfikacji oraz całkowitego usunięcia. W dowolnym momencie możesz trwale usunąć swoje konto oraz całą przypisaną do niego historię postępów bezpośrednio z poziomu ustawień w aplikacji mobilnej.
+
+**6. Kontakt** Jeśli masz jakiekolwiek pytania, wątpliwości lub sugestie dotyczące niniejszej Polityki Prywatności oraz sposobu przetwarzania Twoich danych, prosimy o kontakt z zespołem deweloperskim FlipToFocus.
+
+---
+## Materiały promocyjne (Screenshots)
+![Ekran 1](assets/screenshots/d1.png)
+![Ekran 1](assets/screenshots/d2.png)
+![Ekran 1](assets/screenshots/d3.png)
+![Ekran 1](assets/screenshots/d4.png)
+![Ekran 1](assets/screenshots/d5.png)
+![Ekran 1](assets/screenshots/d6.png)
