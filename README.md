@@ -63,8 +63,7 @@ The project strictly follows IT industry standards using GitHub Actions. Every P
   flutter pub get
   ```
 3. Run the application on a connected Android device or emulator:
-   ```bash
-   flutter run
-   ```
+  ```bash
+  flutter run
 
    
