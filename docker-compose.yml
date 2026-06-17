@@ -1,0 +1,14 @@
+services:
+  server:
+    image: ghcr.io/przystostud/flip-to-focus-server:main
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=sqlite:////app/data/flip_to_focus.db
+      - API_SECRET_KEY=${API_SECRET_KEY}
+    volumes:
+      - server_data:/app/data
+    restart: always
+
+volumes:
+  server_data:
