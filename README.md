@@ -65,5 +65,5 @@ The project strictly follows IT industry standards using GitHub Actions. Every P
 3. Run the application on a connected Android device or emulator:
   ```bash
   flutter run
-
+  ```
    
