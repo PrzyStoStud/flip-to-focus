@@ -12,16 +12,16 @@ Poniżej znajduje się pełny zestaw User Stories definiujący wymagania dla wer
 * **US-01:** Jako nowy użytkownik chcę założyć konto używając adresu email, aby móc bezpiecznie przechowywać swoje postępy w nauce.
 * **US-02:** Jako powracający użytkownik chcę móc się zalogować, aby odzyskać dostęp do mojego profilu i punktów.
 * **US-03:** Jako system chcę, aby tokeny dostępowe (JWT) wygasały po 30 minutach braku aktywności, aby zapewnić bezpieczeństwo danych użytkownika.
-
+* **US-04:** Jako użytkownik chcę mieć możliwość ręcznego wylogowania się z aplikacji, aby bezpiecznie zamknąć moją sesję JWT i chronić dostęp do mojego konta.
+  
 **Konfiguracja i UI:**
-* **US-04:** Jako użytkownik chcę móc wybrać czas trwania sesji skupienia (15, 25 lub 60 minut), aby dostosować technikę Pomodoro do moich aktualnych zadań.
-* **US-05:** Jako użytkownik chcę otrzymać czytelny komunikat z prośbą o wyłączenie optymalizacji baterii, aby system nie ubijał timera działającego w tle.
-* **US-06:** Jako użytkownik chcę widzieć wskaźnik ładowania (loader) podczas łączenia z API, aby wiedzieć, że aplikacja nie uległa zawieszeniu.
+* **US-05:** Jako użytkownik chcę móc wybrać czas trwania sesji skupienia (15, 25 lub 60 minut), aby dostosować technikę Pomodoro do moich aktualnych zadań.
+* **US-06:** Jako użytkownik chcę otrzymać czytelny komunikat z prośbą o wyłączenie optymalizacji baterii, aby system nie ubijał timera działającego w tle.
+* **US-07:** Jako użytkownik chcę widzieć wskaźnik ładowania (loader) podczas łączenia z API, aby wiedzieć, że aplikacja nie uległa zawieszeniu.
 
 **Mechanika Timera i Sensory (Core MVP):**
-* **US-07:** Jako aplikacja chcę monitorować odczyty z akcelerometru (oś Z), aby automatycznie uruchomić odliczanie timera w momencie płaskiego odłożenia telefonu.
-* **US-08:** Jako użytkownik chcę, aby jakiekolwiek podniesienie telefonu przed końcem czasu natychmiast przerywało sesję, aby wymusić na mnie fizyczne odcięcie od ekranu.
-* **US-09:** Jako użytkownik chcę poczuć wibrację po upływie wyznaczonego czasu, aby wiedzieć, że mogę podnieść telefon bez utraty punktów.
+* **US-08:** Jako aplikacja chcę monitorować odczyty z akcelerometru (oś Z), aby automatycznie uruchomić odliczanie timera w momencie płaskiego odłożenia telefonu.
+* **US-09:** Jako użytkownik chcę, aby jakiekolwiek podniesienie telefonu przed końcem czasu natychmiast przerywało sesję, aby wymusić na mnie fizyczne odcięcie od ekranu.
 * **US-10:** Jako użytkownik chcę zobaczyć ekran gratulacyjny po udanej sesji, aby otrzymać pozytywne wzmocnienie psychologiczne.
 
 **Grywalizacja i Profil:**
